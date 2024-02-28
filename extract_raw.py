@@ -90,7 +90,6 @@ if __name__ == "__main__":
     )
 
     wikis = list(data["wikidata_id"])
-    wikis = wikis[:1000]
 
     final_list = []
 
