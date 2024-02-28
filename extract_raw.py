@@ -90,12 +90,18 @@ if __name__ == "__main__":
     )
 
     wikis = list(data["wikidata_id"])
+    wikis = wikis[:1000]
 
     final_list = []
+
+    # for wiki in tqdm(wikis, total=len(wikis)):
+    #     result = final_function(wiki)
+    #     final_list.append(result)
+
     with Pool(8) as p:
         results = list(tqdm(p.imap(final_function, wikis), total=len(wikis)))
 
-    results_df = pd.DataFrame(results)
+    # results_df = pd.DataFrame(results)
 
     with open("raw_data/results.json", "w") as f:
         json.dump(results, f)
