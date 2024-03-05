@@ -1,9 +1,9 @@
 # literary-works
 
-to Extract:
+Script for extraction:
 
-```bash
-python extract_raw.py
-```
+extract_raw.py
 
-Data is saved in raw_data/results.json
+Script to format
+
+format.ipynb
