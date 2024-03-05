@@ -80,27 +80,53 @@ def final_function(wiki_id):
         return None
 
 
-if __name__ == "__main__":
+def process_chunk(chunk, chunk_index):
+    with Pool(8) as p:
+        results = list(tqdm(p.imap(final_function, chunk), total=len(chunk)))
+    with open(f"raw_data/extracts/results_{chunk_index}.json", "w") as f:
+        json.dump(results, f)
 
-    import pandas as pd
 
+def main():
     data = pd.read_csv("raw_data/literay_works.csv")
     data["wikidata_id"] = data["work"].apply(
         lambda x: x.split("http://www.wikidata.org/entity/")[1]
     )
 
     wikis = list(data["wikidata_id"])
+    chunk_size = 10000
 
-    final_list = []
+    for i in range(0, len(wikis), chunk_size):
+        chunk = wikis[i : i + chunk_size]
+        chunk_index = i // chunk_size
+        process_chunk(chunk, chunk_index)
 
-    # for wiki in tqdm(wikis, total=len(wikis)):
-    #     result = final_function(wiki)
-    #     final_list.append(result)
 
-    with Pool(8) as p:
-        results = list(tqdm(p.imap(final_function, wikis), total=len(wikis)))
+if __name__ == "__main__":
+    main()
 
-    # results_df = pd.DataFrame(results)
 
-    with open("raw_data/results.json", "w") as f:
-        json.dump(results, f)
+# if __name__ == "__main__":
+
+#     import pandas as pd
+
+#     data = pd.read_csv("raw_data/literay_works.csv")
+#     data["wikidata_id"] = data["work"].apply(
+#         lambda x: x.split("http://www.wikidata.org/entity/")[1]
+#     )
+
+#     wikis = list(data["wikidata_id"])
+
+#     final_list = []
+
+#     # for wiki in tqdm(wikis, total=len(wikis)):
+#     #     result = final_function(wiki)
+#     #     final_list.append(result)
+
+#     with Pool(8) as p:
+#         results = list(tqdm(p.imap(final_function, wikis), total=len(wikis)))
+
+#     # results_df = pd.DataFrame(results)
+
+#     with open("raw_data/results.json", "w") as f:
+#         json.dump(results, f)
